@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Матанчикс </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="hero__content">
+          <p class="eyebrow">твоя личная библиотека видосов</p>
+          <h1>Матанчикс ♥ ♡ </h1>
+          <p class="subtitle">
+            <span></span> 
+            для просмотра прямо в браузере.
+          </p>
+        </div>
+        <div class="hero__stats" aria-label="Статистика">
+          <div>
+            <strong id="lessonCount">0</strong>
+            <span>уроков</span>
+          </div>
+          <div>
+            <strong>MP4</strong>
+            <span>формат</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="player-shell" aria-label="Видеоплеер">
+        <div class="video-frame">
+          <video id="videoPlayer" controls preload="metadata" poster="">
+            Ваш браузер не поддерживает видео.
+          </video>
+          <div class="empty-player" id="emptyPlayer">
+            <span>Добавь MP4-файлы в папку videos</span>
+          </div>
+        </div>
+        <div class="current-lesson">
+          <p>Сейчас открыт</p>
+          <h2 id="currentTitle">Урок не выбран</h2>
+        </div>
+      </section>
+
+      <section class="lessons-section">
+        <div class="section-heading">
+          <h2>Все уроки</h2>
+          <p>Выбери видео и кайфуй</div> <p>
+        </div>
+        <div class="lessons-grid" id="lessonsGrid"></div>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
