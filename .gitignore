@@ -3,3 +3,6 @@ node_modules/
 
 videos/*.mp4
 !videos/.gitkeep
+
+*.rar
+*.zip

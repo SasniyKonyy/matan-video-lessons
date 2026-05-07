@@ -4,19 +4,40 @@ const currentTitle = document.querySelector("#currentTitle");
 const emptyPlayer = document.querySelector("#emptyPlayer");
 const lessonCount = document.querySelector("#lessonCount");
 
-const cleanTitle = (filename) =>
-  filename
-    .replace(/^.*\//, "")
+const cleanTitle = (value) => {
+  const filename = String(value).split("?")[0].replace(/^.*\//, "");
+
+  return decodeURIComponent(filename)
     .replace(/\.mp4$/i, "")
     .replace(/[-_]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+};
 
-const makeVideoUrl = (filename) =>
-  filename
+const makeVideoUrl = (src) => {
+  if (/^https?:\/\//i.test(src)) {
+    return src;
+  }
+
+  return src
     .split("/")
     .map((part) => encodeURIComponent(part))
     .join("/");
+};
+
+const normalizeLesson = (item) => {
+  if (typeof item === "string") {
+    return {
+      title: cleanTitle(item),
+      src: makeVideoUrl(item),
+    };
+  }
+
+  return {
+    title: item.title || cleanTitle(item.src),
+    src: makeVideoUrl(item.src),
+  };
+};
 
 const setActiveLesson = (lesson, button) => {
   document.querySelectorAll(".lesson-card").forEach((card) => {
@@ -40,7 +61,7 @@ const renderLessons = (lessons) => {
 
   if (!lessons.length) {
     lessonsGrid.innerHTML =
-      '<div class="empty-list">Пока нет уроков. Положи MP4-файлы в папку videos и запусти сборку заново.</div>';
+      '<div class="empty-list">Пока нет уроков. Добавь ссылки Vercel Blob в lessons.json.</div>';
     return;
   }
 
@@ -72,11 +93,8 @@ fetch("lessons.json", { cache: "no-store" })
     }
     return response.json();
   })
-  .then((files) => {
-    const lessons = files.map((file) => ({
-      title: cleanTitle(file),
-      src: makeVideoUrl(file),
-    }));
+  .then((items) => {
+    const lessons = items.filter((item) => item?.src || typeof item === "string").map(normalizeLesson);
     renderLessons(lessons);
   })
   .catch(() => {

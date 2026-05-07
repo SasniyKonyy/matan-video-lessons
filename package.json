@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "node scripts/generate-lessons.js"
+    "build": "node scripts/check-lessons.js"
   },
   "devDependencies": {}
 }
