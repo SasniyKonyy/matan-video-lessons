@@ -1,12 +1,9 @@
-const { head } = require("@vercel/blob");
+const { get } = require("@vercel/blob");
 const { Readable } = require("stream");
 
-const copyHeader = (source, target, name) => {
-  const value = source.headers.get(name);
-
-  if (value) {
-    target.setHeader(name, value);
-  }
+module.exports.config = {
+  runtime: "nodejs",
+  maxDuration: 300,
 };
 
 module.exports = async function handler(request, response) {
@@ -23,44 +20,35 @@ module.exports = async function handler(request, response) {
   }
 
   try {
-    const blob = await head(pathname, { access: "private" });
-    const blobUrl = blob.url || blob.downloadUrl;
+    const result = await get(pathname, {
+      access: "private",
+      ifNoneMatch: request.headers["if-none-match"] ?? undefined,
+    });
 
-    if (!blobUrl) {
+    if (!result) {
       response.status(404).send("Video not found.");
       return;
     }
 
-    const headers = {
-      Authorization: `Bearer ${process.env.BLOB_READ_WRITE_TOKEN}`,
-    };
-
-    if (request.headers.range) {
-      headers.Range = request.headers.range;
-    }
-
-    if (request.headers["if-none-match"]) {
-      headers["If-None-Match"] = request.headers["if-none-match"];
-    }
-
-    const upstream = await fetch(blobUrl, { headers });
-
-    response.statusCode = upstream.status;
-    copyHeader(upstream, response, "content-type");
-    copyHeader(upstream, response, "content-length");
-    copyHeader(upstream, response, "content-range");
-    copyHeader(upstream, response, "accept-ranges");
-    copyHeader(upstream, response, "etag");
-    copyHeader(upstream, response, "last-modified");
-    response.setHeader("Content-Disposition", "inline");
-    response.setHeader("Cache-Control", "private, no-cache");
-
-    if (request.method === "HEAD" || !upstream.body) {
-      response.end();
+    if (result.statusCode === 304) {
+      response.setHeader("ETag", result.blob.etag);
+      response.setHeader("Cache-Control", "private, no-cache");
+      response.status(304).end();
       return;
     }
 
-    Readable.fromWeb(upstream.body).pipe(response);
+    response.setHeader("Content-Type", result.blob.contentType || "video/mp4");
+    response.setHeader("ETag", result.blob.etag);
+    response.setHeader("Content-Disposition", "inline");
+    response.setHeader("Cache-Control", "private, no-cache");
+
+    if (request.method === "HEAD" || !result.stream) {
+      response.status(200).end();
+      return;
+    }
+
+    response.statusCode = 200;
+    Readable.fromWeb(result.stream).pipe(response);
   } catch (error) {
     response.status(500).send(error.message);
   }
