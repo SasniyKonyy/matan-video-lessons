@@ -16,7 +16,7 @@ module.exports = async function handler(request, response) {
       .sort((a, b) => a.pathname.localeCompare(b.pathname, "ru", { numeric: true }))
       .map((blob, index) => ({
         title: cleanTitle(blob.pathname) || `Урок ${index + 1}`,
-        src: `/api/video?pathname=${encodeURIComponent(blob.pathname)}`,
+        src: blob.url,
       }));
 
     response.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=300");
