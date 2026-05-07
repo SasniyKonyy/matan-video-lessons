@@ -6,34 +6,10 @@
 
 1. Открой Vercel Dashboard.
 2. Перейди в Storage -> Blob.
-3. Открой загруженное видео и скопируй его публичную ссылку.
-4. Добавь ссылку в `lessons.json`.
+3. Загрузи туда `.mp4`.
+4. Сайт сам получит список MP4 через `/api/lessons`.
 
-Пример:
-
-```json
-[
-  {
-    "title": "Отношение отрезков, пункт а",
-    "src": "https://example.public.blob.vercel-storage.com/video.mp4"
-  }
-]
-```
-
-Можно добавлять сколько угодно уроков:
-
-```json
-[
-  {
-    "title": "Урок 1",
-    "src": "https://example.public.blob.vercel-storage.com/lesson-1.mp4"
-  },
-  {
-    "title": "Урок 2",
-    "src": "https://example.public.blob.vercel-storage.com/lesson-2.mp4"
-  }
-]
-```
+В Vercel проект должен быть подключен к Blob store, чтобы в переменных среды был `BLOB_READ_WRITE_TOKEN`.
 
 ## Запуск
 

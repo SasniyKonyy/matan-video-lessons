@@ -86,10 +86,10 @@ const renderLessons = (lessons) => {
   });
 };
 
-fetch("lessons.json", { cache: "no-store" })
+fetch("/api/lessons", { cache: "no-store" })
   .then((response) => {
     if (!response.ok) {
-      throw new Error("Не удалось загрузить lessons.json");
+      throw new Error("Не удалось загрузить список уроков");
     }
     return response.json();
   })

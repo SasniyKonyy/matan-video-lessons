@@ -2,5 +2,8 @@
   "scripts": {
     "build": "node scripts/check-lessons.js"
   },
+  "dependencies": {
+    "@vercel/blob": "^2.3.0"
+  },
   "devDependencies": {}
 }
